@@ -1,0 +1,15 @@
+{%extends 'main/base.html'%}
+{%block content%}
+<div class="bg-background text-primary-foreground min-h-screen flex items-center justify-center">
+    <div class="bg-card shadow-lg rounded-lg p-6">
+      <h2 class="text-2xl text-gray-600 font-bold mb-4">Are you sure you want to Logout?</h2>
+      <form method="post" action="{% url 'user_logout' %}">
+        {% csrf_token %}
+        <div class="flex justify-center space-x-4">
+            <button class="bg-red-500 text-gray-100 px-4 py-2 rounded-lg">Yes</button>
+          </form>
+          <a href="{% url 'homePage' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg">No</a>
+        </div>
+    </div>
+  </div>
+{%endblock content%}

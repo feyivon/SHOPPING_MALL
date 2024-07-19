@@ -1,15 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from .forms import ProductForm
+from .forms import ProductForm, ProductSearchForm
 from .models import Product, SavedCart
 
 # Create your views here.
 def homePage(request):
-    product_list = Product.objects.all()
-    context = {
-        'product_list' : product_list
-    }
-    return render(request, 'main/homePage.html', context)
+    # product_list = Product.objects.all()
+    # context = {
+    #     'product_list' : product_list
+    # }
+    # return render(request, 'main/homePage.html', context)
+
+    form = ProductSearchForm()
+    query = request.GET.get('query')
+    if query:
+        products = Product.objects.filter(name__icontains=query)
+    else:
+        products = Product.objects.all()
+    return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
 
 def addProduct(request):
     if request.method == 'POST':
