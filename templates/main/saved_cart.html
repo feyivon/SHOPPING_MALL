@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold mb-4">Your Saved Carts Historys</h1>
+    {% for cart in saved_carts %}
+    <div class="bg-card rounded-lg p-4 mb-4">
+        <a href="{% url 'view_saved_cart_details' saved_cart_id=cart.id %}">
+            <h2 class="text-lg font-bold">Cart Saved on {{ cart.saved_at }}</h2>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

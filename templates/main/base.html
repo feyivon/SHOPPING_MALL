@@ -1,0 +1,127 @@
+{%load static%}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <title>Document</title>
+    <style>
+        #id_name {
+    /* Your CSS styles here */
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+#id_price {
+    /* Your CSS styles here */
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+    </style>
+    <script src="https://kit.fontawesome.com/6f961eaa51.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="bg-black text-gray-300 py-4">
+        <div class=" flex justify-between px-[30px]">
+          <div>
+            <a href="{%url 'homePage'%}" class="text-lg font-bold text-primary-foreground">Product List <i class="fa-solid fa-list"></i></a>
+          </div>
+          <nav>
+            <ul class="flex space-x-[30px]">
+              <li>
+                <a href="{% url 'add_product' %}" class="text-primary-foreground hover:text-primary/80">Add Product <i class="fa-solid fa-plus"></i></a>
+              </li>
+              <li>
+                <a href="{% url 'cart_list' %}" class="text-primary-foreground hover:text-primary/80">Cart <i class="fa-solid fa-cart-shopping"></i></a>
+              </li>
+              <li>
+                <a href="{% url 'view_saved_carts' %}" class="text-primary-foreground hover:text-primary/80">History <i class="fa-solid fa-clipboard"></i></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {%block content%}
+    {%endblock content%}
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent default link behavior
+            
+            const productId = this.getAttribute('data-product-id');
+            const url = `/addtocart/${productId}/product/`;
+
+            fetch(url, {
+                method: 'GET',  // Adjust method if needed (POST might be more appropriate)
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',  // Identifies AJAX request in Django
+                    'Content-Type': 'application/json'  // Adjust content type if sending data
+                },
+            })
+            .then(response => response.json())  // Adjust parsing method based on server response
+            .then(data => {
+                // Handle response data as needed (update UI, show message, etc.)
+                console.log('Response:', data);
+                // Example: Reload cart details section
+                const cartDetailsSection = document.querySelector('.cart');
+                fetch('/cart/')  // URL to fetch updated cart details
+                    .then(response => response.text())
+                    .then(html => {
+                        cartDetailsSection.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error fetching cart details:', error));
+            })
+            .catch(error => console.error('Error adding to cart:', error));
+        });
+    });
+});
+
+
+
+
+const quantityButtons = document.querySelectorAll('.quantity-button');
+
+    quantityButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            const action = this.getAttribute('data-action');
+            const url = `/updatecart/${productId}/${action}/`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+                const cartDetailsSection = document.querySelector('.cart');
+                fetch('/cart/')
+                    .then(response => response.text())
+                    .then(html => {
+                        cartDetailsSection.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error fetching cart details:', error));
+            })
+            .catch(error => console.error('Error updating cart quantity:', error));
+        });
+    });
+</script>
+</body>
+</html>

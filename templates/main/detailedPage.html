@@ -1,0 +1,18 @@
+{%extends 'main/base.html'%}
+{%block content%}
+<div class="p-5">
+
+    <h2 class="text-2xl font-semibold mb-2">{{product.name}}</h2>
+    <div class="mb-4">
+      <span class="text-xl font-semibold text-primary">{{product.price}}</span> <br>
+      <div class="py-5">
+        <a href="{% url 'add_to_cart' product_id=product.pk %}" class="bg-black text-white p-2 rounded-md" data-product-id="{{ product.pk }}">Add to Cart</a>
+      </div>
+      <a href="{%url 'edit_product' pk=product.pk%}" class="bg-blue-500 text-white p-2 rounded-md mt-3 mr-5">Edit Product</a>
+      <a href="{%url 'confirm_delete' pk=product.pk%}" class="bg-red-500 text-white p-2 rounded-md mt-3">Delete Product</a>
+
+    </div>
+</div>
+
+
+{%endblock content%}

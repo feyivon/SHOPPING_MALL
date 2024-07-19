@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold mb-4">Your Shopping Cart</h1>
+    {% for product_id, item in cart.items %}
+    <div class="bg-card rounded-lg p-4 mb-4 flex items-center">
+        <div class="flex-1">
+            <h2 class="text-lg font-bold">{{ item.name }}</h2>
+            <p class="text-lg font-bold mt-2">₦{{ item.price|multiply:item.quantity }}</p>
+        </div>
+        <div class="flex items-center">
+            <a href="{% url 'update_cart_quantity' product_id=product_id action='decrease' %}" class="text-[30px] mr-2 font-bold decrease-quantity">-</a>
+            <span id="product-{{ product_id }}-quantity" class="text-lg font-bold">{{ item.quantity }}</span>
+            <a href="{% url 'update_cart_quantity' product_id=product_id action='increase' %}" class="text-[30px] ml-2 font-bold increase-quantity">+</a>
+        </div>
+        <a href="{% url 'remove_from_cart' product_id=product_id %}" class="text-red-500 ml-4">Remove</a>
+    </div>
+    {% endfor %}
+    <div class="mt-8 flex justify-between items-center">
+        <div class="text-lg text-blue-500 font-bold">
+            <div class="total-amount mb-1">Total:₦{{ total_amount }}</div> <br>
+            <a href="{% url 'clear_cart' %}" class="text-md font-bold text-white bg-red-500 p-3 rounded-lg">Clear Cart</a>
+        </div>
+        <a href="{% url 'save_cart' %}" class="text-md font-bold text-white bg-green-500 p-3 rounded-lg">Save Cart</a>
+    </div>
+</div>
+{% endblock content %}
