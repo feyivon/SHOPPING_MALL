@@ -42,12 +42,19 @@
     <div class="bg-black text-gray-300 py-4">
         <div class=" flex justify-between px-[30px]">
           <div>
+            {%if request.user.is_authenticated%}
+            {{request.user.email}}
+            {%else%}
+            {%endif%}
             <a href="{%url 'homePage'%}" class="text-lg font-bold text-primary-foreground">Product List <i class="fa-solid fa-list"></i></a>
           </div>
           <nav>
             <ul class="flex space-x-[30px]">
               <li>
+                {%if request.user.is_authenticated and user.is_superuser%}
                 <a href="{% url 'add_product' %}" class="text-primary-foreground hover:text-primary/80">Add Product <i class="fa-solid fa-plus"></i></a>
+                {%else%}
+                {%endif%}
               </li>
               <li>
                 <a href="{% url 'cart_list' %}" class="text-primary-foreground hover:text-primary/80">Cart <i class="fa-solid fa-cart-shopping"></i></a>

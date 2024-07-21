@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .forms import ProductForm, ProductSearchForm
 from .models import Product, SavedCart
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 # Create your views here.
 def homePage(request):
@@ -19,6 +20,15 @@ def homePage(request):
         products = Product.objects.all()
     return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
 
+def superuser_required(view_func):
+    decorated_view_func = user_passes_test(
+        lambda u: u.is_superuser,
+        login_url='loginPage'
+    )(view_func)
+    return decorated_view_func
+
+@superuser_required
+@login_required
 def addProduct(request):
     if request.method == 'POST':
         product_form = ProductForm(request.POST)
@@ -37,6 +47,8 @@ def detailedPage(request, pk):
     product = get_object_or_404(Product, pk = pk)
     return render(request, 'main/detailedPage.html', {'product': product})
 
+@superuser_required
+@login_required
 def productEdit(request, pk):
     product = get_object_or_404(Product, pk = pk)
     if request.method == 'POST':
@@ -48,10 +60,14 @@ def productEdit(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'main/productEdit.html', {'form':form})
 
+@superuser_required
+@login_required
 def confirmDelete(request, pk):
     product = get_object_or_404(Product, pk = pk)
     return render(request, 'main/deleteProduct.html', {'product': product})
 
+@superuser_required
+@login_required
 def deleteProduct(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
@@ -125,14 +141,16 @@ def update_cart_quantity(request, product_id, action):
     request.session['cart'] = cart
     return redirect('cart_list')
 
+@login_required
 def save_cart(request):
     cart = request.session.get('cart', {})
     if cart:
-        SavedCart.objects.create(cart_data=cart)
+        SavedCart.objects.create(user=request.user ,cart_data=cart)
     return redirect('cart_list')
 
+@login_required
 def view_saved_carts(request):
-    saved_carts = SavedCart.objects.all().order_by('-saved_at')
+    saved_carts = SavedCart.objects.filter(user=request.user).order_by('-saved_at')
     return render(request, 'main/saved_cart.html', {'saved_carts': saved_carts})
 
 def view_saved_cart_details(request, saved_cart_id):
