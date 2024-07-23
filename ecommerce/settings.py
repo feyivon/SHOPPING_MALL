@@ -1,4 +1,5 @@
 from pathlib import Path
+import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -71,17 +72,22 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Management',
-        'USER': 'postgres',
-        'PASSWORD': 'Odion12345$$',
-        'HOST': 'localhost',
-        'PORT': '5432'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'Management',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Odion12345$$',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgres://postgres:Odion12345$$@localhost:5432/Management'
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
