@@ -13,20 +13,20 @@ def superuser_required(view_func):
     )(view_func)
     return decorated_view_func
 
-
 def homePage(request):
     form = ProductSearchForm()
     query = request.GET.get('query')
+    products = Product.objects.none()  
     if query:
         products = Product.objects.filter(name__icontains=query)
+    elif request.user.is_authenticated:
+        products = Product.objects.filter(user=request.user)
+        if not products.exists():
+            return render(request, 'main/noitem.html')
     else:
-        if request.user.is_authenticated:
-            products = Product.objects.filter(user=request.user)
-        else:
-            # products = Product.objects.none()
-            return render(request, 'main/non_user.html')
-    return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
+        return render(request, 'main/non_user.html')
 
+    return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
 
 @login_required
 def addProduct(request):
