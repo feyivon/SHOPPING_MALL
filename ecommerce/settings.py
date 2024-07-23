@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-#21$4^y^(u=_7(qrk(5v%=6ol1_o3!-@5jtcjpp&j#iju-ajo+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['budmag.onrender.com']
+ALLOWED_HOSTS = ['budmag.onrender.com', 'localhost']
 
 
 # Application definition
@@ -77,7 +77,8 @@ DATABASES = {
         'NAME': 'Management',
         'USER': 'postgres',
         'PASSWORD': 'Odion12345$$',
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
