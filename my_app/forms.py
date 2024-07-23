@@ -9,5 +9,6 @@ class ProductForm(forms.ModelForm):
 class ProductSearchForm(forms.Form):
     query = forms.CharField(max_length=100, label=False, 
                             widget = forms.TextInput(attrs={'class':'input-search',
-                                                            'placeholder': 'search product..'}))
+                                                            'placeholder': 'search product..',
+                                                            'style': 'border-radius: 10px;',}))
     

@@ -23,7 +23,8 @@ def homePage(request):
         if request.user.is_authenticated:
             products = Product.objects.filter(user=request.user)
         else:
-            products = Product.objects.none()
+            # products = Product.objects.none()
+            return render(request, 'main/non_user.html')
     return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
 
 
