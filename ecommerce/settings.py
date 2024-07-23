@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-#21$4^y^(u=_7(qrk(5v%=6ol1_o3!-@5jtcjpp&j#iju-ajo+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://budmag.onrender.com']
+ALLOWED_HOSTS = ['budmag.onrender.com']
 
 
 # Application definition
