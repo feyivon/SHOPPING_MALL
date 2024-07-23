@@ -5,20 +5,6 @@ from .models import Product, SavedCart
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 # Create your views here.
-def homePage(request):
-    # product_list = Product.objects.all()
-    # context = {
-    #     'product_list' : product_list
-    # }
-    # return render(request, 'main/homePage.html', context)
-
-    form = ProductSearchForm()
-    query = request.GET.get('query')
-    if query:
-        products = Product.objects.filter(name__icontains=query)
-    else:
-        products = Product.objects.all()
-    return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
 
 def superuser_required(view_func):
     decorated_view_func = user_passes_test(
@@ -27,13 +13,28 @@ def superuser_required(view_func):
     )(view_func)
     return decorated_view_func
 
-@superuser_required
+
+def homePage(request):
+    form = ProductSearchForm()
+    query = request.GET.get('query')
+    if query:
+        products = Product.objects.filter(name__icontains=query)
+    else:
+        if request.user.is_authenticated:
+            products = Product.objects.filter(user=request.user)
+        else:
+            products = Product.objects.none()
+    return render(request, 'main/homePage.html', {'product_list': products, 'search_form': form})
+
+
 @login_required
 def addProduct(request):
     if request.method == 'POST':
         product_form = ProductForm(request.POST)
         if product_form.is_valid():
-            product_form.save()
+            product = product_form.save(commit=False)  # Create an instance but don't save to the database yet
+            product.user = request.user
+            product.save()
             return redirect('homePage') 
     else:
         product_form = ProductForm()  
@@ -47,7 +48,6 @@ def detailedPage(request, pk):
     product = get_object_or_404(Product, pk = pk)
     return render(request, 'main/detailedPage.html', {'product': product})
 
-@superuser_required
 @login_required
 def productEdit(request, pk):
     product = get_object_or_404(Product, pk = pk)
@@ -60,13 +60,11 @@ def productEdit(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'main/productEdit.html', {'form':form})
 
-@superuser_required
 @login_required
 def confirmDelete(request, pk):
     product = get_object_or_404(Product, pk = pk)
     return render(request, 'main/deleteProduct.html', {'product': product})
 
-@superuser_required
 @login_required
 def deleteProduct(request, pk):
     product = get_object_or_404(Product, pk=pk)
