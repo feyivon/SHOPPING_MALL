@@ -33,7 +33,7 @@ def addProduct(request):
     if request.method == 'POST':
         product_form = ProductForm(request.POST)
         if product_form.is_valid():
-            product = product_form.save(commit=False)  # Create an instance but don't save to the database yet
+            product = product_form.save(commit=False)
             product.user = request.user
             product.save()
             return redirect('homePage') 
@@ -73,6 +73,13 @@ def deleteProduct(request, pk):
     return redirect('homePage')
     # return render(request, 'main/deleteProduct.html', {'product':product})
 
+def cart_count(request):
+    cart = request.session.get('cart', {})
+    cart_count = sum(item['quantity'] for item in cart.values())
+    return {
+        'cart_count':cart_count
+    }
+
 def cartDetails(request):
     cart = request.session.get('cart', {})
     # Calculate total amount from cart items
@@ -88,26 +95,30 @@ def add_to_cart(request, product_id):
     cart = request.session.get('cart', {})
     message = ''
 
-    if str(product_id) in cart:
-        if 'quantity' not in cart[str(product_id)]:
-            cart[str(product_id)]['quantity'] = 1
+    # Convert product_id to string for consistency in session handling
+    product_id_str = str(product_id)
+
+    if product_id_str in cart:
+        if 'quantity' not in cart[product_id_str]:
+            cart[product_id_str]['quantity'] = 1
         else:
-            cart[str(product_id)]['quantity'] +=1
-        message = 'Product is already in the cart'
+            cart[product_id_str]['quantity'] += 1
+        message = 'Product quantity increased in the cart'
     else:
-        cart[str(product_id)] = {
+        cart[product_id_str] = {
             'name': product.name,
             'price': float(product.price),
             'quantity': 1
         }
         message = 'Product added to cart'
 
+    # Update the session with the new cart
     request.session['cart'] = cart
-    
+
     if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         return JsonResponse({'message': message, 'cart': cart}, status=200)
     else:
-        # Handle non-AJAX request here (if needed)
+        # Handle non-AJAX request
         context = {
             'message': message,
             'cart': cart,
